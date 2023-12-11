@@ -143,22 +143,38 @@ for i in range(m):
     encoded_vector[p-1] = ones_count % 2
 
 print("Original feature vector: ", feature_vector)
-print("Encoded feature vector: ", encoded_vector)
+print("Encoded feature vector: ", encoded_vector) '''Encoded feature vector obtained by applying hamming code on Original feature vector of single image ,
+                                                     which we have obtained by prediction from CNN Model.'''
 feature_vector=np.array(feature_vector)
 encoded_vector=np.array(encoded_vector)
 print(encoded_vector.shape)
-image1=np.array(image1)
+
+import numpy as np
+
+
+
+desired_shape = (65536,)  # Desired shape of the expanded vector
+repeated_vector = np.tile(encoded_vector[:10], int(desired_shape[0] / 10) + 1)
+expanded_vector = repeated_vector[:desired_shape[0]]
+print(expanded_vector)
 expanded_vector=np.array(expanded_vector)
-#result = np.bitwise_xor(image1, expanded_vector)
+encoded_byte_array=bytearray(expanded_vector)
 
-original_image = bytearray(image1)
-encoded_byte_array = bytearray(expanded_vector)
+
+# Convert feature_byte_array and encoded_byte_array to numpy arrays   //Confusion
 original_image = np.array(original_image)
-print(original_image)
 encoded_array = np.array(encoded_byte_array)
-xor_result = np.bitwise_xor(original_image, encoded_array)
+print(original_image.shape)
+print(encoded_array.shape)
 
-encrypted_byte_array=np.reshape(xor_result,(512,1024))
+
+# Perform XOR operation on the arrays
+xor_result = np.bitwise_xor(original_image, encoded_array)
+print(xor_result)
+
+
+# Convert the result back to a byte array
+encrypted_byte_array=np.reshape(xor_result,(512,1024))   '''This line reshapes the result of the XOR operation to the desired shape of (512, 1024).'''
 print(encrypted_byte_array.shape)
 
 from PIL import Image
@@ -167,6 +183,13 @@ import matplotlib.pyplot as plt
 encrypted_image = Image.fromarray(np.uint8(encrypted_byte_array*255))
 encrypted_image.save('encrypt2.jpg')
 plt.imshow(encrypted_image,cmap='gray')
+
+
+
+
+
+
+
 
 #Image decryption
 
@@ -185,11 +208,6 @@ decrypted_pil_image = Image.fromarray(np.uint8(decrypted_image * 255))
 decrypted_pil_image.save('decrypt.jpg')
 
 plt.imshow(decrypted_pil_image,cmap='gray')
-encoded_vector=encoded_vector[:10]
-print(encoded_vector.shape)
-
-desired_shape = (65536,)  # Desired shape of the expanded vector
-repeated_vector = np.tile(encoded_vector[:10], int(desired_shape[0] / 10) + 1)
 expanded_vector = repeated_vector[:desired_shape[0]]
 
 print(expanded_vector)
